@@ -107,10 +107,13 @@ def run():
 
     start, end = get_bounds()
     limit = 0
+    central_area = set()
+
     for y in range(start[1], end[1]+1):
         for x in range(start[0], end[0]+1):
             current = (x, y)
             min_distance = 9999999
+            total_distance = 0
             closests = []
 
             for anchor in anchors:
@@ -120,6 +123,11 @@ def run():
                     closests = [anchor]
                 elif distance == min_distance:
                     closests.append(anchor)
+
+                total_distance += distance
+
+            if total_distance < 10000:
+                central_area.add(current)
 
             if len(closests) == 1:
                 closests[0].assign(current, start, end)
@@ -133,10 +141,11 @@ def run():
         if not largest or largest.total_area < anchor.total_area:
             largest = anchor
 
-    return largest
+    return (largest, central_area)
 
-largest = run()
+largest, central_area = run()
 print('largest:', largest)
+print('central area:', len(central_area))
 
 """
 --- Part Two ---
@@ -171,3 +180,5 @@ Your actual region will need to be much larger than this example, though, instea
 
 What is the size of the region containing all locations which have a total distance to all given coordinates of less than 10000?
 """
+
+
